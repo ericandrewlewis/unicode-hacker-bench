@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <style>
+        body, textarea, input, button {
+        	font-size: 30px;
+        }
+        button {
+        	padding: 15px;
+        }
+        .target {
+        	padding: 50px;
+        }
+        </style>
+        <script>
+        $(function() {
+        	var combiningCharacters = [ '0300', '0301', '035B', '035E' ];
+        	for ( var i = parseInt( '0300', 16 ); i <= parseInt( '036F', 16 ); i++ ) {
+        		var codePoint = i.toString(16);
+        		var $button = $('<button></button>')
+        			.addClass('unicode-button')
+        			.data('code-point', codePoint )
+        			.html('&#x' + codePoint );
+        		$('.insertion-buttons')
+        			.append( $button );
+        	}
+        	$('body').on( 'click', '.unicode-button', function() {
+        		var $el, codePoint;
+        		$el = $(this);
+        		codePoint = $el.data('code-point');
+        		var x = $('.target').val() + String.fromCharCode( parseInt( codePoint, 16 ) );
+        		$('.target').val( x );
+        	});
+        });
+        </script>
+    </head>
+    <body>
+    	<h1>Unicode hacker bench</h1>
+    	<textarea class="target"></textarea>
+    	<div class="insertion-buttons"></div>
+    </body>
+</html>
