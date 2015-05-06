@@ -1,55 +1,109 @@
 <!doctype html>
 <html lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <style>
-        html {
-            box-sizing: border-box;
-        }
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
-        body, textarea, input, button {
-            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        	font-size: 30px;
-        }
-        button {
-        	padding: 15px;
-        }
-        .target {
-        	padding: 50px;
-            width: 100%;
-        }
-        </style>
-        <script>
-        $(function() {
-        	for ( var i = parseInt( '0300', 16 ); i <= parseInt( '036F', 16 ); i++ ) {
-        		var codePoint = i.toString(16);
-        		var $button = $('<button></button>')
-        			.addClass('unicode-button')
-        			.data('code-point', codePoint )
-        			.html('&#x' + codePoint );
-        		$('.insertion-buttons')
-        			.append( $button );
-        	}
-        	$('body').on( 'click', '.unicode-button', function() {
-        		var $el, codePoint;
-        		$el = $(this);
-        		codePoint = $el.data('code-point');
-        		var x = $('.target').val() + String.fromCharCode( parseInt( codePoint, 16 ) );
-        		$('.target').val( x );
-        	});
-        });
-        </script>
-    </head>
-    <body>
-    	<h1>Unicode hacker bench</h1>
-    	<textarea class="target"></textarea>
-    	<div class="insertion-buttons"></div>
-    </body>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="jquery.js"></script>
+		<style>
+			html {
+					box-sizing: border-box;
+			}
+			*, *:before, *:after {
+					box-sizing: inherit;
+			}
+			body, textarea, input, button {
+				font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+				font-size: 30px;
+			}
+			button {
+				padding: 15px;
+			}
+			.target {
+				padding: 50px;
+					width: 100%;
+			}
+		</style>
+		<script>
+		$(function() {
+			var currentCodePoint = '0';
+			var pointsPerPage = 100;
+			/**
+			 * Initialize a set of buttons given a specific code point.
+			 */
+			function initializeButtonsAtCodePoint( codePoint ) {
+				var i = parseInt( codePoint, 16 ),
+						end = i + pointsPerPage;
+
+				// Empty out what was there
+				$('.insertion-buttons').html('');
+
+				for ( i; i <= end; i++ ) {
+					var codePoint = i.toString(16);
+					var $button = $('<button></button>')
+						.addClass('unicode-button')
+						.data('code-point', codePoint )
+						.html('&#x' + codePoint );
+					$('.insertion-buttons')
+						.append( $button );
+				}
+			};
+			initializeButtonsAtCodePoint( currentCodePoint );
+
+			/*
+			 * Unicode button click handler.
+			 */
+			$('body').on( 'click', '.unicode-button', function() {
+				var $el, codePoint, _p;
+				$el = $(this);
+				codePoint = $el.data('code-point');
+				/*
+				 * We can't use String.fromCharCode() to create Unicode characters past
+				 * the basic multilingual plane, so we'll use a DOM node instead.
+				 */
+				_p = document.createElement('p');
+				_p.innerHTML = '&#x' + codePoint;
+				$('.target').val( $('.target').val() + _p.innerHTML );
+			});
+
+			/*
+			 * Pagination click handler.
+			 */
+			$('[data-js-action="page-left"]').on( 'click', function() {
+				currentCodePoint = ( parseInt( currentCodePoint, 16 ) - pointsPerPage ).toString(16);
+				initializeButtonsAtCodePoint(currentCodePoint);
+			});
+
+			$('[data-js-action="page-right"]').on( 'click', function() {
+				currentCodePoint = ( parseInt( currentCodePoint, 16 ) + pointsPerPage ).toString(16);
+				initializeButtonsAtCodePoint(currentCodePoint);
+			});
+
+			$('[data-js-action="go-to-code-point"]').on( 'click', function() {
+				currentCodePoint = $(this).data('code-point');
+				initializeButtonsAtCodePoint( currentCodePoint );
+			});
+		});
+		</script>
+	</head>
+	<body>
+		<h1>Unicode hacker bench</h1>
+		<textarea class="target"></textarea>
+		<div class="navigation-buttons">
+			<button data-js-action="page-left"><</button>
+			<button data-js-action="page-right">></button>
+			Jump to
+			<button data-js-action="go-to-code-point" data-code-point="0">Ascii</button>
+			<button data-js-action="go-to-code-point" data-code-point="1F600">Emoticons</button>
+			<button data-js-action="go-to-code-point" data-code-point="1F000">Mahjong Tiles</button>
+			<button data-js-action="go-to-code-point" data-code-point="300">Combining Diacritical Marks</button>
+			<button data-js-action="go-to-code-point" data-code-point="25A0">Geometric Shapes</button>
+			<button data-js-action="go-to-code-point" data-code-point="1D100">Musical Symbols</button>
+			<button data-js-action="go-to-code-point" data-code-point="1F700">Alchemical Symbols</button>
+
+		</div>
+		<div class="insertion-buttons"></div>
+	</body>
 </html>
