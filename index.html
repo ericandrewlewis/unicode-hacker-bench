@@ -66,6 +66,7 @@
 				_p = document.createElement('p');
 				_p.innerHTML = '&#x' + codePoint;
 				$('.target').val( $('.target').val() + _p.innerHTML );
+				$('.target').focus();
 			});
 
 			/*
@@ -74,16 +75,19 @@
 			$('[data-js-action="page-left"]').on( 'click', function() {
 				currentCodePoint = ( parseInt( currentCodePoint, 16 ) - pointsPerPage ).toString(16);
 				initializeButtonsAtCodePoint(currentCodePoint);
+				$('.target').focus();
 			});
 
 			$('[data-js-action="page-right"]').on( 'click', function() {
 				currentCodePoint = ( parseInt( currentCodePoint, 16 ) + pointsPerPage ).toString(16);
 				initializeButtonsAtCodePoint(currentCodePoint);
+				$('.target').focus();
 			});
 
 			$('[data-js-action="go-to-code-point"]').on( 'click', function() {
 				currentCodePoint = $(this).data('code-point');
 				initializeButtonsAtCodePoint( currentCodePoint );
+				$('.target').focus();
 			});
 		});
 		</script>
